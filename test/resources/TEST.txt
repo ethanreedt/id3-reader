@@ -1,0 +1,1 @@
+Gratefully borrowed from similar project: https://github.com/mpatric/mp3agic

@@ -9,18 +9,20 @@ import util.SyncSafeInt;
 import java.io.RandomAccessFile;
 
 public class TagByteContent {
+	int HEADER_LENGTH = 10;
+	
 	Header tagHeader;
 	ByteBuffer content;
 	int size;
 	
 	// Works on ID3v2.x
 	public TagByteContent(File file) {
-		int HEADER_LENGTH = 10;
 
 		byte[] header = new byte[HEADER_LENGTH];
 		try {
 			RandomAccessFile raf = new RandomAccessFile(file, "r");
 			raf.read(header);
+			raf.close();
 		} catch (IOException e) {
 			System.exit(1); // TODO: find better way to end program
 		}
@@ -50,6 +52,7 @@ public class TagByteContent {
 			RandomAccessFile raf = new RandomAccessFile(file, "r");
 			raf.skipBytes(HEADER_LENGTH);
 			raf.read(contentBytes);
+			raf.close();
 		} catch (IOException e) {
 			System.exit(1);
 		}
@@ -76,15 +79,44 @@ public class TagByteContent {
 	}
 	
 	public boolean hasNextFrame() {
-		return false;
+		if (this.content.position() > this.size) {
+			return false;
+		}
+		// TODO: Another check for frame tag
+		return true;
 	}
 	
 	public Frame getNextFrame() {
-		return null;
+		byte[] frameTitleBytes = new byte[4];
+		byte[] frameSizeBytes = new byte[4];
+		byte[] frameFlagBytes = new byte[2];
+		this.content.get(frameTitleBytes);
+		this.content.get(frameSizeBytes);
+		this.content.get(frameFlagBytes);
+		
+		String frameTitle = new String(frameTitleBytes);
+		
+		int frameSize = SyncSafeInt.toInt(frameSizeBytes);
+		byte[] frameContentBytes = new byte[frameSize];
+		
+		return FrameFactory.makeFrame(frameTitle, frameSize, frameFlagBytes, frameContentBytes);
 	}
 	
 	public Footer getFooter() {
-		return null;
+		byte[] ThreeDITagBytes = new byte[3];
+		this.content.get(ThreeDITagBytes);
+		String ThreeDITag = new String(ThreeDITagBytes);
+		
+		int version = (int) this.content.get();
+		int revision = (int) this.content.get();
+		
+		int flags = (int) this.content.get(); // char is 2 bytes
+		
+		byte[] sizeBytes = new byte[4];
+		this.content.get(sizeBytes);
+		int size = SyncSafeInt.toInt(sizeBytes);
+		
+		return new Footer(ThreeDITag, version, revision, flags, size);
 	}
 	
 	public Padding getPadding() {

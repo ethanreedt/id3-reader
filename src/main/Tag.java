@@ -1,9 +1,8 @@
 package main;
 
-import java.nio.ByteBuffer;
+import java.io.File;
 import java.util.ArrayList;
 
-import util.ReadHelper;
 
 public class Tag {
 	Header header;
@@ -11,13 +10,13 @@ public class Tag {
 	TagByteContent content;
 	ArrayList<Frame> frames;
 	int padding;
-	Header footer;
+	Footer footer;
 	
-	public Tag() {
-		this.content = new TagByteContent();
+	public Tag(File file) {
+		this.content = new TagByteContent(file);
 		this.header = content.getHeader();
 		if (header.flags.get("extendedHeader")) {
-			this.extendedHeader = tbc.getExtendedHeader();
+			this.extendedHeader = content.getExtendedHeader();
 		}
 		
 		// Only needs to be done per flag
@@ -35,14 +34,5 @@ public class Tag {
 		}
 		
 		extendedHeader.verifyTagRestrictions(frames);
-	}
-	
-	public void unsynchroniseFrames(ArrayList<Frame> frames) {
-		// replace all $FF 00 with $FF 00 00
-		return;
-	}
-	
-	public boolean hasNextFrame() {
-		return false;
 	}
 }
