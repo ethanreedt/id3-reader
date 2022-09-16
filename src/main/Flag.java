@@ -8,4 +8,8 @@ public abstract class Flag {
 		this.description = description;
 		this.isSet = isSet;
 	}
+	
+	public boolean isSet() {
+		return this.isSet;
+	}
 }

@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import util.SyncSafeInt;
+import v23.ExtendedHeaderV23;
+import v24.ExtendedHeaderV24;
 
 import java.io.RandomAccessFile;
 
@@ -63,7 +65,26 @@ public class TagByteContent {
 		return this.tagHeader;
 	}
 	
-	public ExtendedHeader getExtendedHeader() {
+	public ExtendedHeaderV23 getExtendedHeaderV23() {
+		byte[] ehSizeBytes = new byte[4];
+		this.content.get(ehSizeBytes);
+		int ehSize = Integer.parseInt(new String(ehSizeBytes));
+		
+		int ehFlags = (int) this.content.get();
+		this.content.get(); // last flag byte holds no data
+		
+		byte[] ehPaddingSizeBytes = new byte[4];
+		this.content.get(ehPaddingSizeBytes);
+		int ehPaddingSize = Integer.parseInt(new String(ehPaddingSizeBytes));
+		
+		byte[] ehContent = new byte[ehSize - 6]; // minus flag and padding bytes
+		this.content.get(ehContent);
+		
+		ExtendedHeaderV23 eh = new ExtendedHeaderV23(ehSize, ehFlags, ehPaddingSize, ehContent);
+		return eh;
+	}
+	
+	public ExtendedHeaderV24 getExtendedHeaderV24() {
 		byte[] ehSizeBytes = new byte[4];
 		this.content.get(ehSizeBytes);
 		int ehSize = SyncSafeInt.toInt(ehSizeBytes);
@@ -71,10 +92,10 @@ public class TagByteContent {
 		int ehNumOfFlagBytes = (int) this.content.get();
 		int ehFlags = (int) this.content.get();
 		
-		byte[] ehContent = new byte[ehSize];
+		byte[] ehContent = new byte[ehSize - 6];
 		this.content.get(ehContent);
 		
-		ExtendedHeader eh = new ExtendedHeader(ehSize, ehNumOfFlagBytes, ehFlags, ehContent);
+		ExtendedHeaderV24 eh = new ExtendedHeaderV24(ehSize, ehNumOfFlagBytes, ehFlags, ehContent);
 		return eh;
 	}
 	
@@ -120,6 +141,8 @@ public class TagByteContent {
 	}
 	
 	public Padding getPadding() {
-		return null;
+		byte[] paddingBytes = new byte[this.size - this.content.position()];
+		this.content.get(paddingBytes);
+		return new Padding(paddingBytes);
 	}
 }

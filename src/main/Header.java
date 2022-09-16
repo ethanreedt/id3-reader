@@ -7,7 +7,7 @@ public class Header {
 	String id;
 	int version;
 	int revision;
-	HashMap<String, Boolean> flags;
+	HashMap<String, HeaderFlag> flags;
 	int size;
 	
 //	public Header(byte[] headerBytes) {
@@ -35,11 +35,17 @@ public class Header {
 		this.id = id;
 		this.version = version;
 		this.revision = revision;
-		this.flags.put("unsynchronisation", (flags & 128) > 0);
-		this.flags.put("extendedHeader", (flags & 64) > 0);
-		this.flags.put("experimentalIndicator", (flags & 32) > 0);
-		this.flags.put("footerPresent", (flags & 16) > 0);
+		this.flags.put("unsynchronisation", new HeaderFlag("unsynchronisation", (flags & 128) > 0));
+		this.flags.put("extendedHeader", new HeaderFlag("extendedHeader", (flags & 64) > 0));
+		this.flags.put("experimentalIndicator", new HeaderFlag("experimentalIndicator", (flags & 32) > 0));
+		this.flags.put("footerPresent", new HeaderFlag("footerPresent", (flags & 16) > 0));
 		this.size = size;
 		// TODO Auto-generated constructor stub
+	}
+	
+	public class HeaderFlag extends Flag {
+		public HeaderFlag(String description, boolean isSet) {
+			super(description, isSet);
+		}
 	}
 }

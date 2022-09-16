@@ -1,15 +1,17 @@
-package main;
+package v24;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import main.Flag;
+import main.Frame;
 import util.ReadHelper;
 
-public class ExtendedHeader {
+public class ExtendedHeaderV24 {
 	int size;
 	int numOfFlagBytes;
 	HashMap<String, ExtendedHeaderFlag> flags;
-	HashMap<String, Integer>[] restrictions;
+	HashMap<String, Integer> restrictions;
 	ReadHelper rh;
 	
 
@@ -28,7 +30,7 @@ public class ExtendedHeader {
 //		// TODO Auto-generated constructor stub
 //	}
 
-	public ExtendedHeader(int size, int numOfFlagBytes, int flags, byte[] content) {
+	public ExtendedHeaderV24(int size, int numOfFlagBytes, int flags, byte[] content) {
 		this.size = size;
 		this.numOfFlagBytes = numOfFlagBytes;
 		this.flags.put("tagIsAnUpdate", new ExtendedHeaderFlag("tagIsAnUpdate", (flags & 64) > 0));

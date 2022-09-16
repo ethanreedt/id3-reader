@@ -9,7 +9,9 @@ package main;
 public class FrameFactory {
 
 	public static Frame makeFrame(String frameTitle, int frameSize, byte[] frameFlagBytes, byte[] frameContentBytes) {
-		// TODO Auto-generated method stub
+		switch(frameTitle) {
+		
+		}
 		return null;
 	}
 
