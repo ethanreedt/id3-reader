@@ -7,15 +7,9 @@ import java.nio.ByteBuffer;
 
 public abstract class AbstractID3v2Tag {
 	public static String IDENTIFIER = "ID3";
-	
-	int version;
-	int revision;
-	int flags;
-	int size;
-	
-	Header header;
-	
-	ByteBuffer content;
+
+	protected AbstractHeader header;
+	protected ByteBuffer content;
 	
 	public AbstractID3v2Tag(byte[] tag) {
 		this.content = ByteBuffer.wrap(tag);
@@ -43,11 +37,11 @@ public abstract class AbstractID3v2Tag {
 				}
 				if (tagAtBeginning) {
 					raf.seek(0);
-					byte[] headerBytes = new byte[10];
-					Header header = Header.headerFromBytes(headerBytes);
-					int size = header.size + 10; // size of tag + size of header
-					size += (header.flags.get("footerPresent").isSet()) ? 10 : 0;
-					// TODO: SEEK FRAME
+					byte[] headerBytes = new byte[AbstractHeader.HEADER_SIZE];
+					raf.read(headerBytes);
+					ID3v24Header header = new ID3v24Header(headerBytes); // versions within release are backwards compatible. Using ID3v24 for footer and size is reliable.
+					int size = header.size + AbstractHeader.HEADER_SIZE; // size of tag + size of header
+					size += (header.flags.get("footerPresent") != null && header.flags.get("footerPresent").isSet()) ? 10 : 0; // TODO: Potentially refactor to `Header` method (`hasSetFlag(String)`)
 					raf.seek(0);
 					byte[] tagBytes = new byte[size];
 					raf.read(tagBytes);
@@ -91,5 +85,9 @@ public abstract class AbstractID3v2Tag {
 		}
 		raf.close();
 		return null;
+	}
+	
+	public AbstractHeader getHeader() {
+		return this.header;
 	}
 }

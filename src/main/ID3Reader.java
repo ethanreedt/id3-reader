@@ -1,3 +1,5 @@
+package main;
+
 import java.io.File;
 
 import id3v1.ID3v11Tag;
@@ -10,7 +12,7 @@ public class ID3Reader {
 	
 	public void findTag(File file) {
 		this.tag = null;
-		
+		  
 		SUPPORTED_VERSIONS[] values = SUPPORTED_VERSIONS.values();
 		for (int i = values.length; i >= 0; i--) {
 			SUPPORTED_VERSIONS version = values[i];
