@@ -1,6 +1,8 @@
 package id3v2.util;
 
 public class SyncSafeInt {
+	public static int SYNCSAFEINT_SIZE = 4;
+	
 	public static int toInt(byte[] ssInt) {
 		return -1;
 	}

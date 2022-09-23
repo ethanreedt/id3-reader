@@ -3,7 +3,6 @@ package id3v2.main;
 import java.util.HashMap;
 
 import id3v2.util.SyncSafeInt;
-import id3v2.v22.ID3v22Header;
 
 public abstract class AbstractHeader {
 	public static int HEADER_SIZE = 10;
@@ -23,7 +22,7 @@ public abstract class AbstractHeader {
 		this.size = size;
 	}
 	
-	protected AbstractHeader(byte[] headerBytes) {
+	protected AbstractHeader(byte[] headerBytes) throws IllegalArgumentException {
 		byte[] idBytes = {headerBytes[0], headerBytes[1], headerBytes[2]};
 		this.identifier = new String(idBytes);
 		
@@ -53,7 +52,11 @@ public abstract class AbstractHeader {
 	
 	protected abstract void setFlags(int flags) throws IllegalArgumentException;
 	
-	protected class HeaderFlag extends Flag {
+	public HashMap<String, HeaderFlag> getFlags() {
+		return this.flags;
+	}
+	
+	public class HeaderFlag extends Flag {
 		public HeaderFlag(String description, boolean isSet) {
 			super(description, isSet);
 		}

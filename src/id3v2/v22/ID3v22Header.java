@@ -7,7 +7,7 @@ public class ID3v22Header extends AbstractHeader {
 		super(identifier, version, revision, flags, size);
 	}
 	
-	public ID3v22Header(byte[] headerBytes) {
+	public ID3v22Header(byte[] headerBytes) throws IllegalArgumentException {
 		super(headerBytes);
 	}
 	
