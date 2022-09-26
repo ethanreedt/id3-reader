@@ -23,6 +23,7 @@ public class Genre {
 	
 	private static HashMap<Integer, String> getID3v1GenreMap() throws IOException {
 		if (ID3v1GenreMap == null) {
+			// TODO: Share Genre resources globally
 			Genre.ID3v1GenreMap = genresFromCSV("resources/ID3v1Genre.csv");
 		}
 		return ID3v1GenreMap;
